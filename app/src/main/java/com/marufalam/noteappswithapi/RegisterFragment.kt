@@ -28,10 +28,10 @@ class RegisterFragment : Fragment() {
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         binding.btnLogin.setOnClickListener {
             // findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
-            authViewModel.loginUser(UserRequest("maruf3@gmail.com", "maruf786@", "maruf"))
+            authViewModel.loginUser(UserRequest("maruf6@gmail.com", "maruf786@", "maruf"))
         }
         binding.btnSignUp.setOnClickListener {
-        authViewModel.registerUser(UserRequest("maruf3@gmail.com", "maruf786@", "maruf"))
+        authViewModel.registerUser(UserRequest("maruf6@gmail.com", "maruf786@", "maruf"))
 
             //findNavController().navigate(R.id.action_registerFragment_to_mainFragment)
         }
