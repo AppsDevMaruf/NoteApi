@@ -5,10 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.cheezycode.notesample.models.UserRequest
 import com.marufalam.noteappswithapi.databinding.FragmentRegisterBinding
+import com.marufalam.noteappswithapi.utils.NetworkResult
 import com.marufalam.noteappswithapi.viewmodel.AuthViewModel
 
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,12 +34,31 @@ class RegisterFragment : Fragment() {
             authViewModel.loginUser(UserRequest("maruf6@gmail.com", "maruf786@", "maruf"))
         }
         binding.btnSignUp.setOnClickListener {
-        authViewModel.registerUser(UserRequest("maruf6@gmail.com", "maruf786@", "maruf"))
+            authViewModel.registerUser(UserRequest("maruf6 @gmail.com", "maruf786@", "maruf"))
 
-            //findNavController().navigate(R.id.action_registerFragment_to_mainFragment)
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        authViewModel.userResponseLiveData.observe(viewLifecycleOwner, Observer {
+            binding.progressBar.isVisible = false
+            when (it) {
+                is NetworkResult.Success -> {
+                    //token work will working here...
+                    findNavController().navigate(R.id.action_registerFragment_to_mainFragment)
+                }
+                is NetworkResult.Error -> {
+                    binding.txtError.text = it.message
+                }
+                is NetworkResult.Loading -> {
+                    binding.progressBar.isVisible = true
+                }
+
+            }
+        })
     }
 
     override fun onDestroyView() {
