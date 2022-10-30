@@ -29,20 +29,46 @@ class RegisterFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
-        binding.btnLogin.setOnClickListener {
-            // findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
-            authViewModel.loginUser(UserRequest("maruf6@gmail.com", "maruf786@", "maruf"))
-        }
-        binding.btnSignUp.setOnClickListener {
-            authViewModel.registerUser(UserRequest("maruf6 @gmail.com", "maruf786@", "maruf"))
-
-        }
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.btnLogin.setOnClickListener {
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+        }
+        binding.btnSignUp.setOnClickListener {
+            val validateResult = validateUserInput()
+            if (validateResult.first){
+                authViewModel.registerUser(getUserRequest())
+
+            }else{
+                binding.txtError.text = validateResult.second
+
+            }
+
+        }
+        bindObservers()
+
+    }
+    private fun getUserRequest():UserRequest{
+        val emailAddress = binding.txtEmail.toString().trim()
+        val password = binding.txtPassword.toString().trim()
+        val username = binding.txtUsername.toString().trim()
+        println("11...............${username.toString()}")
+        println("22...............${emailAddress.toString()}")
+        println("33...............${password.toString()}")
+        return UserRequest(emailAddress,password,username)
+    }
+
+    private fun validateUserInput(): Pair<Boolean, String> {
+       val userRequest = getUserRequest()
+        return authViewModel.validateCredentials(userRequest.username,userRequest.email,userRequest.password)
+
+    }
+
+    private fun bindObservers() {
         authViewModel.userResponseLiveData.observe(viewLifecycleOwner, Observer {
             binding.progressBar.isVisible = false
             when (it) {
